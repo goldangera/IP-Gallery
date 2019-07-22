@@ -11,37 +11,70 @@
 {% block content %}
 {{block.super}}
 <div class="container">
-    {% for picture in all_images %}
-                            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter{{picture.id}}">
-                                  <img style="height:220px;width: 250px;padding: 5px;" src="{{picture.image_path.url}}" alt="Image"> 
-                            </button>
-          
-                                {% for picture in all_images %}
-                                <!-- Modal -->
-                                <div class="modal fade" id="exampleModalCenter{{picture.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-                                  <div class="modal-dialog modal-dialog-centered" role="document">
-                                    <div class="modal-content">
-                                      <div class="modal-header">
-                                        <h1 class="modal-title" id="exampleModalLongTitle">{{picture.image_name}} </h1>
-                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                          <span aria-hidden="true">&times;</span>
-                                        </button>
-                                       </div>
-                                      <div class="modal-body">
-                                      <h3 class="modal-title" id="exampleModalLongTitle">{{picture.image_category}} </h3>
-                                      <p>{{picture.image_description}}</p>
-                                      <img style="height:220px;width: 250px;padding: 5px;" src="{{picture.image_path.url}}" alt="Image"> 
-                                      </div>
-                                      <div class="modal-footer">
-                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
-                                {% endfor %}
-                          {% endfor %}
-                      </div>
-                          {% endblock %}
-              
-              
-</html>
+        <div class="row">
+            {% for image in all_images %}
+            <div class="col-md-4">
+                <img style="width: 350px" height="250px" src="{{image.image_path.url}}" alt="" class="img-fluid" data-toggle="modal" data-target="#{{image.id}}">
+                <p>{{image.image_description|truncatewords:6}}</p>
+                <p>
+                    {% for category in image.image_categories.all %}
+                    <span class="badge badge-primary" style="font-size:1em;">{{image_category}}</span>
+                    {% endfor %}
+                </p>
+            </div>
+
+            <!-- Modal -->
+            <div id="{{image.id}}" class="modal fade" role="dialog">
+              <div class="modal-dialog image">
+
+                <!-- Modal content-->
+                <div class="modal-content ">
+                  <div class="modal-header">
+                    <h4 class="modal-title">{{image.image_name}}</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  </div>
+                  <div class="modal-body">
+                    <img style="width: 200px" height="250px" src="{{image.image_path.url}}" alt="" class="img-fluid">
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#{{image.id}}-info"><i class="fas fa-info-circle"></i> Info</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" style="border: 0.5px solid #d3d3d3;">Close</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Modal -->
+            <div id="{{image.id}}-info" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content ">
+                  <div class="modal-header">
+                    <h4 class="modal-title">{{image.image_category}} Caption</h4>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                  </div>
+                  <div class="modal-body">
+                    <p>{{image.image_description}}</p>
+                  </div>
+                  <div class="modal-footer">
+                    <input class="form-control input-lg" type="text"  value="https://gallery254-golda.herokuapp.com{{image.image_path.url}}" id="{{image.id}}-url" >
+                    <button class="btn btn-primary" onclick="copyToClipboard('{{image.id}}-url')">Copy</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            <script type="text/javascript">
+            function copyToClipboard(element) {
+                var myVar = document.getElementById(element);
+                myVar.select();
+                document.execCommand("copy");
+            }
+            </script>
+            {% endfor %}
+
+        </div>
+    </div>
+{% endblock %}
